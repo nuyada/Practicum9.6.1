@@ -8,33 +8,52 @@ namespace Practicum9._6._1
 {
     internal class Program
     {
+
         static void Main(string[] args)
         {
-            Exception[] exceptions =
-            {
-                new DivideByZeroException(),
-                new IndexOutOfRangeException(),
-                new FormatException(),
-                new MyException("Это мое собственное исключение"),
-                new NullReferenceException()
-            };
+            Sort sort = new Sort();
+            List<string> names = new List<string> { "Иванов", "Петров", "Сидоров", "Кузнецов", "Попов" };
+
+            // Подписка на событие сортировки
+            sort.SortNames += Sort.SortName;
+
             try
             {
-                foreach(var exception in exceptions)
+                while (true)
                 {
-                    throw exception;
+                    Console.WriteLine("Введите 1 для сортировки А-Я или 2 для сортировки Я-А:");
+                    int choice = Convert.ToInt32(Console.ReadLine());
+
+                    if (choice == 1 || choice == 2)
+                    {
+                        // Вызов события сортировки
+                        sort.OnSortNames(names, choice == 1);
+
+                        Console.WriteLine("Отсортированный список фамилий:");
+                        foreach (string name in names)
+                        {
+                            Console.WriteLine(name);
+                        }
+                    }
+                    else
+                    {
+                        throw new MyException("Неверный ввод. Введите 1 или 2.");
+                    }
                 }
             }
-            catch(Exception ex)
+            catch (FormatException)
             {
-                Console.WriteLine("Возникло исключение" + ex.Message);
+                Console.WriteLine("Неверный формат ввода. Введите число 1 или 2.");
             }
-            finally
+            catch (MyException ex)
             {
-                Console.WriteLine("Блок finally выполнен.");
+                Console.WriteLine(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Произошла ошибка: " + ex.Message);
             }
             Console.ReadKey();
         }
-
     }
 }
